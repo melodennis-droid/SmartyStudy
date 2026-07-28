@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes" />
+    <title>SmartStudy - App de Estudos</title>
+    <link rel="stylesheet" href="styles.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
+    <script src="script.js"></script>
+</head>
+<body class="light-mode">
+    <!-- ===== SIDEBAR ===== -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="logo">
+                <span class="logo-icon">📚</span>
+                <span>SmartStudy</span>
+            </div>
+            <button class="sidebar-toggle" id="sidebarToggle">☰</button>
+        </div>
+
+        <nav class="sidebar-nav">
+            <button class="nav-btn active" data-page="dashboard">
+                <span class="icon">🏠</span> Dashboard
+            </button>
+            <button class="nav-btn" data-page="subjects">
+                <span class="icon">📚</span> Matérias
+            </button>
+            <button class="nav-btn" data-page="tasks">
+                <span class="icon">✅</span> Tarefas
+            </button>
+            <button class="nav-btn" data-page="calendar">
+                <span class="icon">📅</span> Calendário
+            </button>
+            <button class="nav-btn" data-page="pomodoro">
+                <span class="icon">⏱️</span> Pomodoro
+            </button>
+            <button class="nav-btn" data-page="goals">
+                <span class="icon">🎯</span> Metas
+            </button>
+            <button class="nav-btn" data-page="notes">
+                <span class="icon">📝</span> Notas
+            </button>
+            <button class="nav-btn" data-page="achievements">
+                <span class="icon">🏆</span> Conquistas
+            </button>
+            <button class="nav-btn" data-page="profile">
+                <span class="icon">👤</span> Perfil
+            </button>
+        </nav>
+
+        <div class="sidebar-footer">
+            <button class="theme-toggle" id="themeToggle">
+                <span>🌙</span> Modo Escuro
+            </button>
+        </div>
+    </aside>
+
+    <!-- ===== MAIN CONTENT ===== -->
+    <main class="main-content">
+        <!-- DASHBOARD -->
+        <div class="page active" id="dashboard">
+            <div class="page-header">
+                <h2>🏠 Dashboard</h2>
+                <span class="subtitle">Seu progresso acadêmico</span>
+            </div>
+
+            <div class="stats-grid" id="statsGrid">
+                <div class="stat-card">
+                    <div class="stat-icon-wrap blue">📚</div>
+                    <div class="stat-content">
+                        <h4 id="totalSubjects">0</h4>
+                        <p>Matérias</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon-wrap green">✅</div>
+                    <div class="stat-content">
+                        <h4 id="completedTasks">0</h4>
+                        <p>Tarefas Concluídas</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon-wrap purple">⏱️</div>
+                    <div class="stat-content">
+                        <h4 id="studyHours">0h</h4>
+                        <p>Horas de Estudo</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon-wrap orange">🏆</div>
+                    <div class="stat-content">
+                        <h4 id="achievementsCount">0</h4>
+                        <p>Conquistas</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="charts-grid">
+                <div class="chart-box">
+                    <h4>📊 Desempenho por Matéria</h4>
+                    <canvas id="performanceChart"></canvas>
+                </div>
+                <div class="chart-box">
+                    <h4>📈 Progresso Semanal</h4>
+                    <canvas id="weeklyChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- SUBJECTS -->
+        <div class="page" id="subjects">
+            <div class="page-header">
+                <h2>📚 Matérias</h2>
+                <span class="subtitle">Gerencie suas disciplinas</span>
+            </div>
+
+            <div class="card mb-24">
+                <div class="form-row">
+                    <input type="text" id="subjectName" placeholder="Nome da matéria" class="input-field" />
+                    <input type="text" id="subjectTeacher" placeholder="Professor(a)" class="input-field" />
+                    <select id="subjectColor" class="input-field">
+                        <option value="#4CAF50">🟢 Verde</option>
+                        <option value="#2196F3">🔵 Azul</option>
+                        <option value="#FF9800">🟠 Laranja</option>
+                        <option value="#E91E63">🩷 Rosa</option>
+                        <option value="#9C27B0">🟣 Roxo</option>
+                    </select>
+                    <button onclick="addSubject()" class="btn btn-primary">Adicionar</button>
+                </div>
+            </div>
+
+            <!-- Study Timer -->
+            <div class="card study-timer-card mb-24">
+                <div class="card-header">
+                    <h3>⏳ Cronômetro de Estudo</h3>
+                </div>
+                <p style="color: #64748b; font-size: 14px; margin-bottom: 16px;">
+                    Escolha uma matéria e cronometre seu tempo de estudo.
+                </p>
+                <div class="timer-row">
+                    <select id="studyTimerSubject" class="input-field">
+                        <option value="">Selecione a matéria</option>
+                    </select>
+                    <div class="timer-display" id="studyTimerDisplay">00:00:00</div>
+                    <div class="timer-actions">
+                        <button onclick="startStudyTimer()" class="btn btn-primary" id="studyTimerStartBtn">▶ Iniciar</button>
+                        <button onclick="pauseStudyTimer()" class="btn btn-secondary">⏸️</button>
+                        <button onclick="stopStudyTimer()" class="btn btn-secondary">⏹️ Salvar</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="subjects-grid" id="subjectsList"></div>
+        </div>
+
+        <!-- TASKS -->
+        <div class="page" id="tasks">
+            <div class="page-header">
+                <h2>✅ Tarefas</h2>
+                <span class="subtitle">Organize seus compromissos</span>
+            </div>
+
+            <div class="card mb-24">
+                <div class="form-row">
+                    <input type="text" id="taskTitle" placeholder="Título da tarefa" class="input-field" />
+                    <select id="taskSubject" class="input-field">
+                        <option value="">Matéria</option>
+                    </select>
+                    <input type="date" id="taskDueDate" class="input-field" />
+                    <select id="taskPriority" class="input-field">
+                        <option value="low">🟢 Baixa</option>
+                        <option value="medium">🟡 Média</option>
+                        <option value="high">🔴 Alta</option>
+                    </select>
+                    <button onclick="addTask()" class="btn btn-primary">Adicionar</button>
+                </div>
+            </div>
+
+            <div class="tasks-list" id="tasksList"></div>
+        </div>
+
+        <!-- CALENDAR -->
+        <div class="page" id="calendar">
+            <div class="page-header">
+                <h2>📅 Calendário</h2>
+                <span class="subtitle">Provas e trabalhos</span>
+            </div>
+
+            <div class="calendar-container">
+                <div class="calendar-header">
+                    <h3 id="currentMonth"></h3>
+                    <div class="calendar-nav">
+                        <button onclick="previousMonth()" class="btn btn-secondary btn-sm">◀</button>
+                        <button onclick="nextMonth()" class="btn btn-secondary btn-sm">▶</button>
+                    </div>
+                </div>
+                <div class="calendar-grid" id="calendarGrid"></div>
+                <div class="events-list" id="eventsList">
+                    <h4>📌 Eventos Próximos</h4>
+                </div>
+            </div>
+        </div>
+
+        <!-- POMODORO -->
+        <div class="page" id="pomodoro">
+            <div class="page-header">
+                <h2>⏱️ Pomodoro</h2>
+                <span class="subtitle">Foco e produtividade</span>
+            </div>
+
+            <div class="card pomodoro-box">
+                <div style="margin-bottom: 16px;">
+                    <label style="font-weight: 500; display: block; margin-bottom: 6px;">Estudando qual matéria?</label>
+                    <select id="pomodoroSubject" class="input-field" style="max-width: 280px; margin: 0 auto;">
+                        <option value="">Sem matéria específica</option>
+                    </select>
+                </div>
+
+                <div class="timer-display" id="timerDisplay">25:00</div>
+
+                <div class="timer-controls">
+                    <button onclick="startPomodoro()" class="btn btn-primary">▶ Iniciar</button>
+                    <button onclick="pausePomodoro()" class="btn btn-secondary">⏸️ Pausar</button>
+                    <button onclick="resetPomodoro()" class="btn btn-secondary">🔄 Resetar</button>
+                </div>
+
+                <div class="timer-settings">
+                    <div class="setting-group">
+                        <label>Foco: <span id="focusTime">25</span> min</label>
+                        <input type="range" min="1" max="60" value="25" id="focusSlider" />
+                    </div>
+                    <div class="setting-group">
+                        <label>Pausa: <span id="breakTime">5</span> min</label>
+                        <input type="range" min="1" max="30" value="5" id="breakSlider" />
+                    </div>
+                </div>
+
+                <div class="session-info">
+                    Ciclos completos: <strong id="pomodoroCycles">0</strong>
+                </div>
+            </div>
+        </div>
+
+        <!-- GOALS -->
+        <div class="page" id="goals">
+            <div class="page-header">
+                <h2>🎯 Metas</h2>
+                <span class="subtitle">Defina seus objetivos</span>
+            </div>
+
+            <div class="card mb-24">
+                <div class="form-row">
+                    <input type="text" id="goalTitle" placeholder="Descreva sua meta" class="input-field" />
+                    <input type="number" id="goalTarget" placeholder="Meta (ex: horas)" class="input-field" />
+                    <button onclick="addGoal()" class="btn btn-primary">Adicionar Meta</button>
+                </div>
+            </div>
+
+            <div class="goals-list" id="goalsList"></div>
+        </div>
+
+        <!-- NOTES -->
+        <div class="page" id="notes">
+            <div class="page-header">
+                <h2>📝 Notas</h2>
+                <span class="subtitle">Anotações rápidas</span>
+            </div>
+
+            <div class="card mb-24">
+                <div class="form-row" style="flex-direction: column;">
+                    <input type="text" id="noteTitle" placeholder="Título da nota" class="input-field" style="width: 100%;" />
+                    <textarea id="noteContent" placeholder="Conteúdo da nota..." class="input-field" style="width: 100%;"></textarea>
+                    <button onclick="addNote()" class="btn btn-primary" style="align-self: flex-start;">Salvar Nota</button>
+                </div>
+            </div>
+
+            <div class="notes-grid" id="notesList"></div>
+        </div>
+
+        <!-- ACHIEVEMENTS -->
+        <div class="page" id="achievements">
+            <div class="page-header">
+                <h2>🏆 Conquistas</h2>
+                <span class="subtitle">Suas realizações</span>
+            </div>
+
+            <div class="achievements-grid" id="achievementsList"></div>
+        </div>
+
+        <!-- PROFILE -->
+        <div class="page" id="profile">
+            <div class="page-header">
+                <h2>👤 Perfil</h2>
+                <span class="subtitle">Suas informações</span>
+            </div>
+
+            <div class="card mb-24">
+                <div class="form-row">
+                    <input type="text" id="profileName" placeholder="Nome completo" class="input-field" />
+                    <input type="text" id="profileCourse" placeholder="Curso" class="input-field" />
+                    <input type="text" id="profileSemester" placeholder="Semestre" class="input-field" />
+                    <button onclick="saveProfile()" class="btn btn-primary">Salvar Perfil</button>
+                </div>
+            </div>
+
+            <div class="card profile-card" id="profileInfo">
+                <div class="profile-avatar" id="profileAvatar">?</div>
+                <h2 id="profileNameDisplay">Seu Nome</h2>
+                <p class="profile-detail" id="profileCourseDisplay">Curso não definido</p>
+                <p class="profile-detail" id="profileSemesterDisplay">Semestre não definido</p>
+            </div>
+        </div>
+    </main>
+
+    <script src="js/script.js"></script>
+</body>
+</html>
